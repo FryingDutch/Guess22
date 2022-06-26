@@ -51,7 +51,7 @@ namespace FrD
 
             _userInput = getUserInput(text);
 
-        } while (!isDigit(_userInput) && std::stoi(_userInput) > 0 && std::stoi(_userInput) <= 3);
+        } while (!isDigit(_userInput) || std::stoi(_userInput) < 1 || std::stoi(_userInput) > 3);
 
         switch (std::stoi(_userInput))
         {
@@ -97,7 +97,6 @@ namespace FrD
                 while (!isDigit(userInput))
                 {
                     system("CLS");
-                    //std::cout << secretNumber;
                     userInput = getUserInput("Enter your guess: ");
                 }
                 numOfGuesses++;
