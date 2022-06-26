@@ -5,6 +5,7 @@ namespace FrD
 {
 	bool GameManager::isRunning = true;
 	std::string GameManager::userInput = "";
+    std::string GameManager::difficulityAsString = "";
     uint32_t GameManager::secretNumber = NULL;
     uint32_t GameManager::maxNumber = NULL;
     uint32_t GameManager::maxGuesses = NULL;
@@ -58,20 +59,20 @@ namespace FrD
         return _userInput;
     }
 
-    void GameManager::printPastGuesses()
+    void GameManager::printStats()
     {
         if (pastGuesses.size() > 0)
         {
-            std::cout << "Previous Guesses: ";
+            std::cout << "Difficulity: " << difficulityAsString << "\n"
+                "Max Number: " << maxNumber << "\n\n" 
+                << "Previous Guesses: ";
+
             for (size_t i = 0; i < pastGuesses.size(); i++)
                 std::cout << pastGuesses[i] << "  ";
             std::cout << "\n";
-        }
-    }
 
-    void GameManager::printTriesLeft()
-    {
-        std::cout << "Tries left: " << (maxGuesses - numOfGuesses) + 1 << "\n";
+            std::cout << "Tries left: " << (maxGuesses - numOfGuesses) + 1 << "\n";
+        }
     }
 
     void GameManager::setDifficulity()
@@ -97,15 +98,18 @@ namespace FrD
         case 1:
             maxGuesses = 7;
             maxNumber = 10;
+            difficulityAsString = "Easy";
             break;
         case 2:
             maxGuesses = 5;
             maxNumber = 20;
+            difficulityAsString = "Normal";
             break;
 
         case 3:
             maxGuesses = 3;
             maxNumber = 30;
+            difficulityAsString = "Hard";
             break;
 
         default:
@@ -141,9 +145,7 @@ namespace FrD
                 while (!isDigit(userInput) || std::stoi(userInput) > maxNumber || std::stoi(userInput) < 0)
                 {
                     system("CLS");
-                    printPastGuesses();
-                    printTriesLeft();
-                    std::cout << "MaxNumber: " << maxNumber << "\n";
+                    printStats();
                     userInput = getUserInput("\nEnter your guess: ");
                 }
                 userInputAsDigit = std::stoi(userInput);

@@ -12,6 +12,7 @@ namespace FrD
 	private:
 		static bool isRunning;
 		static std::string userInput;
+		static std::string difficulityAsString;
 		static uint32_t secretNumber;
 		static uint32_t maxNumber;
 		static uint32_t maxGuesses;
@@ -26,7 +27,7 @@ namespace FrD
 		static bool isYes(std::string answer);
 		static bool isNo(std::string answer);
 		static std::string getUserInput(std::string message);
-		static void printPastGuesses();
+		static void printStats();
 		static void printTriesLeft();
 		static void setDifficulity();
 
