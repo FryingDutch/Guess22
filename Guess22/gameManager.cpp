@@ -14,7 +14,7 @@ namespace FrD
 
     uint32_t GameManager::randomNumber(uint32_t max_number)
     {
-        return rand() % max_number;
+        return (rand() % max_number) + 1;
     }
 
     bool GameManager::isDigit(std::string str)
