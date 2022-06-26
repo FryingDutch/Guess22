@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string>
 #include <time.h>
+#include <vector>
 
 namespace FrD
 {
@@ -16,10 +17,17 @@ namespace FrD
 		static uint32_t maxGuesses;
 		static uint32_t numOfGuesses;
 
+		static std::vector<uint32_t> pastGuesses;
+
 	private:
 		static uint32_t randomNumber(uint32_t max_number);
-		static bool isDigit(std::string);
+		static bool isDigit(std::string str);
+		static bool isYesOrNo(std::string answer);
+		static bool isYes(std::string answer);
+		static bool isNo(std::string answer);
 		static std::string getUserInput(std::string message);
+		static void printPastGuesses();
+		static void printTriesLeft();
 		static void setDifficulity();
 
 	public:

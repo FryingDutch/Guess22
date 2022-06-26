@@ -1,4 +1,5 @@
 #include "GameManager.h"
+#include <vector>
 
 namespace FrD
 {
@@ -8,6 +9,7 @@ namespace FrD
     uint32_t GameManager::maxNumber = NULL;
     uint32_t GameManager::maxGuesses = NULL;
     uint32_t GameManager::numOfGuesses = 0;
+    std::vector<uint32_t>  GameManager::pastGuesses = {};
 
     uint32_t GameManager::randomNumber(uint32_t max_number)
     {
@@ -27,12 +29,49 @@ namespace FrD
         return true;
     }
 
+    bool GameManager::isYesOrNo(std::string answer)
+    {
+        if (answer == "n" || answer == "N" || answer == "y" || answer == "Y")
+            return true;
+        return false;
+    }
+
+    bool GameManager::isYes(std::string answer)
+    {
+        if (answer == "y" || answer == "Y")
+            return true;
+        return false;
+    }
+
+    bool GameManager::isNo(std::string answer)
+    {
+        if (answer == "n" || answer == "N")
+            return true;
+        return false;
+    }
+
     std::string GameManager::getUserInput(std::string message)
     {
         std::string _userInput = "";
         std::cout << message;
         std::getline(std::cin, _userInput);
         return _userInput;
+    }
+
+    void GameManager::printPastGuesses()
+    {
+        if (pastGuesses.size() > 0)
+        {
+            std::cout << "Previous Guesses: ";
+            for (size_t i = 0; i < pastGuesses.size(); i++)
+                std::cout << pastGuesses[i] << "  ";
+            std::cout << "\n";
+        }
+    }
+
+    void GameManager::printTriesLeft()
+    {
+        std::cout << "Tries left: " << (maxGuesses - numOfGuesses) + 1 << "\n";
     }
 
     void GameManager::setDifficulity()
@@ -74,17 +113,22 @@ namespace FrD
         }
     }
 
-	void GameManager::run()
-	{
-        srand(time(0));
-        
+    void GameManager::run()
+    {
+        srand((uint32_t)time(0));
+
         while (isRunning)
         {
-            setDifficulity();
+            static bool keepLastDifficultySetting = false;
+
+            if (!keepLastDifficultySetting)
+                setDifficulity();
 
             secretNumber = randomNumber(maxNumber);
             uint32_t userInputAsDigit = NULL;
             numOfGuesses = 0;
+            pastGuesses.clear();
+
             do
             {
                 if (numOfGuesses > maxGuesses)
@@ -94,26 +138,57 @@ namespace FrD
 
                 userInput = "";
                 userInputAsDigit = NULL;
-                while (!isDigit(userInput))
+                while (!isDigit(userInput) || std::stoi(userInput) > maxNumber || std::stoi(userInput) < 0)
                 {
                     system("CLS");
-                    userInput = getUserInput("Enter your guess: ");
+                    printPastGuesses();
+                    printTriesLeft();
+                    std::cout << "MaxNumber: " << maxNumber << "\n";
+                    userInput = getUserInput("\nEnter your guess: ");
                 }
-                numOfGuesses++;
                 userInputAsDigit = std::stoi(userInput);
+                pastGuesses.push_back(userInputAsDigit);
+
+                numOfGuesses++;
             } while (userInputAsDigit != secretNumber);
 
             if (numOfGuesses > maxGuesses)
-                std::cout << "\nYou Lost!\n";
+                std::cout <<
+                "\nYou Lost!\n"
+                "The secret number was: " << secretNumber << "!\n\n";
 
             else
                 std::cout << "\nYou Win!\n";
 
-            if (getUserInput("Do another game? [y/n]: ") != "y")
+            std::string anotherGameAnswer = "";
+
+            while (!isYesOrNo(anotherGameAnswer))
             {
-                isRunning = false;
-                std::cout << "Bye!";
+                anotherGameAnswer = getUserInput("Do another game? [y/n]: ");
+
+                if (isNo(anotherGameAnswer))
+                {
+                    isRunning = false;
+                    std::cout << "Bye!";
+                }
+
+                else if (isYes(anotherGameAnswer))
+                {
+                    std::string keepSettingAnswer = "";
+
+                    while (!isYesOrNo(keepSettingAnswer))
+                    {
+                        keepSettingAnswer = getUserInput("Keep difficulity setting? [y/n]: ");
+
+                        if (isNo(keepSettingAnswer))
+                            keepLastDifficultySetting = false;
+
+                        else if (isYes(keepSettingAnswer))
+                            keepLastDifficultySetting = true;
+                    }
+                }
             }
+
         };
 	}
 }
